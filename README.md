@@ -11,3 +11,6 @@ vault {
   token = "hvs.CAESIC7RnAtqg9p78nSZ_xC3GN0PbJVJFR_vX0xjJlrOtc-LGh4KHGh2cy5jS01KU3ZOcGhpMlVnaGxjTXRuS0NNZEs"
 }
 
+## Create cluster Role with policy.
+## write policy that will be accessed by the stanza
+## Ensure job Stanza has the correct reference to secret. {{ with secret \"secret/data/me\" }}\n
