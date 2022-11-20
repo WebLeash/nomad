@@ -13,4 +13,4 @@ vault {
 
 ## Create cluster Role with policy.
 ## write policy that will be accessed by the stanza
-## Ensure job Stanza has the correct reference to secret. {{ with secret \"secret/data/me\" }}\n
+## Ensure job Stanza has the correct reference to secret.<br> {{ with secret \"secret/data/me\" }}\n
