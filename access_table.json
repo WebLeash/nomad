@@ -1,0 +1,33 @@
+path "kv/data/me" {
+  capabilities = ["read"]
+}
+path "kv/me" {
+  capabilities = ["read"]
+}
+path "kv/*" {
+  capabilities = ["read"]
+}
+path "me/*" {
+  capabilities = ["read"]
+}
+path "kv/me/*" {
+  capabilities = ["list", "read"]
+
+}
+path "kv/me/name" {
+  capabilities = ["list", "read"]
+}
+path "secrets/me/" {
+  capabilities = ["list", "read"]
+}
+path "/secrets/me/" {
+  capabilities = ["list", "read"]
+}
+
+path "secret/*" {
+  capabilities = ["list", "read"]
+}
+
+path "secret/data/me" {
+  capabilities = ["list", "read"]
+}
