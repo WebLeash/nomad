@@ -1,0 +1,21 @@
+job "consul" {
+    datacenters = ["dc1"]
+
+    type = "service"
+
+    group "consul" {
+        task "consul" {
+            driver = "exec"
+
+            config {
+                command = "consul"
+               # args = ["agent","-dev","-client","0.0.0.0","-bind","${aws_instance.nomad_client.public_ip}"]
+                args = ["agent","-dev"]
+            }
+
+            artifact {
+                source = "https://releases.hashicorp.com/consul/1.6.2/consul_1.6.2_linux_386.zip"
+            }
+        }
+    }
+}

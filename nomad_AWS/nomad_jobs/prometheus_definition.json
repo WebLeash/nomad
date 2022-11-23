@@ -1,0 +1,248 @@
+{
+  "Stop": false,
+  "Region": "global",
+  "Namespace": "default",
+  "ID": "prometheus",
+  "ParentID": "",
+  "Name": "prometheus",
+  "Type": "service",
+  "Priority": 50,
+  "AllAtOnce": false,
+  "Datacenters": [
+    "dc1"
+  ],
+  "Constraints": null,
+  "Affinities": null,
+  "Spreads": null,
+  "TaskGroups": [
+    {
+      "Name": "monitoring",
+      "Count": 1,
+      "Update": {
+        "Stagger": 30000000000,
+        "MaxParallel": 1,
+        "HealthCheck": "checks",
+        "MinHealthyTime": 10000000000,
+        "HealthyDeadline": 300000000000,
+        "ProgressDeadline": 600000000000,
+        "AutoRevert": false,
+        "AutoPromote": false,
+        "Canary": 0
+      },
+      "Migrate": {
+        "MaxParallel": 1,
+        "HealthCheck": "checks",
+        "MinHealthyTime": 10000000000,
+        "HealthyDeadline": 300000000000
+      },
+      "Constraints": [
+        {
+          "LTarget": "${attr.consul.version}",
+          "RTarget": ">= 1.7.0",
+          "Operand": "semver"
+        }
+      ],
+      "Scaling": null,
+      "RestartPolicy": {
+        "Attempts": 2,
+        "Interval": 1800000000000,
+        "Delay": 15000000000,
+        "Mode": "fail"
+      },
+      "Tasks": [
+        {
+          "Name": "prometheus",
+          "Driver": "docker",
+          "User": "",
+          "Config": {
+            "image": "prom/prometheus:latest",
+            "volumes": [
+              "local/prometheus.yml:/etc/prometheus/prometheus.yml"
+            ],
+            "ports": [
+              "prometheus_ui"
+            ]
+          },
+          "Env": null,
+          "Services": [
+            {
+              "Name": "prometheus",
+              "TaskName": "prometheus",
+              "PortLabel": "prometheus_ui",
+              "AddressMode": "auto",
+              "Address": "",
+              "EnableTagOverride": false,
+              "Tags": [
+                "urlprefix-/ strip=/prometheus"
+              ],
+              "CanaryTags": null,
+              "Checks": [
+                {
+                  "Name": "prometheus_ui port alive",
+                  "Type": "http",
+                  "Command": "",
+                  "Args": null,
+                  "Path": "/-/healthy",
+                  "Protocol": "",
+                  "PortLabel": "",
+                  "Expose": false,
+                  "AddressMode": "",
+                  "Interval": 10000000000,
+                  "Timeout": 2000000000,
+                  "InitialStatus": "",
+                  "TLSSkipVerify": false,
+                  "Method": "",
+                  "Header": null,
+                  "CheckRestart": null,
+                  "GRPCService": "",
+                  "GRPCUseTLS": false,
+                  "TaskName": "prometheus",
+                  "SuccessBeforePassing": 0,
+                  "FailuresBeforeCritical": 0,
+                  "Body": "",
+                  "OnUpdate": "require_healthy"
+                }
+              ],
+              "Connect": null,
+              "Meta": null,
+              "CanaryMeta": null,
+              "TaggedAddresses": null,
+              "Namespace": "default",
+              "OnUpdate": "require_healthy",
+              "Provider": "consul"
+            }
+          ],
+          "Vault": null,
+          "Templates": [
+            {
+              "SourcePath": "",
+              "DestPath": "local/prometheus.yml",
+              "EmbeddedTmpl": "---\nglobal:\n  scrape_interval:     5s\n  evaluation_interval: 5s\n\nscrape_configs:\n\n  - job_name: 'nomad_metrics'\n\n    consul_sd_configs:\n    - server: '{{ env \"NOMAD_IP_prometheus_ui\" }}:8500'\n      services: ['nomad-client', 'nomad']\n\n    relabel_configs:\n    - source_labels: ['__meta_consul_tags']\n      regex: '(.*)http(.*)'\n      action: keep\n\n    scrape_interval: 5s\n    metrics_path: /v1/metrics\n    params:\n      format: ['prometheus']\n",
+              "ChangeMode": "noop",
+              "ChangeSignal": "",
+              "ChangeScript": null,
+              "Splay": 5000000000,
+              "Perms": "0644",
+              "Uid": null,
+              "Gid": null,
+              "LeftDelim": "{{",
+              "RightDelim": "}}",
+              "Envvars": false,
+              "VaultGrace": 0,
+              "Wait": null
+            }
+          ],
+          "Constraints": null,
+          "Affinities": null,
+          "Resources": {
+            "CPU": 100,
+            "Cores": 0,
+            "MemoryMB": 300,
+            "MemoryMaxMB": 0,
+            "DiskMB": 0,
+            "IOPS": 0,
+            "Networks": null,
+            "Devices": null
+          },
+          "RestartPolicy": {
+            "Attempts": 2,
+            "Interval": 1800000000000,
+            "Delay": 15000000000,
+            "Mode": "fail"
+          },
+          "DispatchPayload": null,
+          "Lifecycle": null,
+          "Meta": null,
+          "KillTimeout": 5000000000,
+          "LogConfig": {
+            "MaxFiles": 10,
+            "MaxFileSizeMB": 10
+          },
+          "Artifacts": null,
+          "Leader": false,
+          "ShutdownDelay": 0,
+          "VolumeMounts": null,
+          "ScalingPolicies": null,
+          "KillSignal": "",
+          "Kind": "",
+          "CSIPluginConfig": null
+        }
+      ],
+      "EphemeralDisk": {
+        "Sticky": false,
+        "SizeMB": 300,
+        "Migrate": false
+      },
+      "Meta": null,
+      "ReschedulePolicy": {
+        "Attempts": 0,
+        "Interval": 0,
+        "Delay": 30000000000,
+        "DelayFunction": "exponential",
+        "MaxDelay": 3600000000000,
+        "Unlimited": true
+      },
+      "Affinities": null,
+      "Spreads": null,
+      "Networks": [
+        {
+          "Mode": "",
+          "Device": "",
+          "CIDR": "",
+          "IP": "",
+          "Hostname": "",
+          "MBits": 0,
+          "DNS": null,
+          "ReservedPorts": [
+            {
+              "Label": "prometheus_ui",
+              "Value": 9090,
+              "To": 0,
+              "HostNetwork": "default"
+            }
+          ],
+          "DynamicPorts": null
+        }
+      ],
+      "Consul": {
+        "Namespace": ""
+      },
+      "Services": null,
+      "Volumes": null,
+      "ShutdownDelay": null,
+      "StopAfterClientDisconnect": null,
+      "MaxClientDisconnect": null
+    }
+  ],
+  "Update": {
+    "Stagger": 30000000000,
+    "MaxParallel": 1,
+    "HealthCheck": "",
+    "MinHealthyTime": 0,
+    "HealthyDeadline": 0,
+    "ProgressDeadline": 0,
+    "AutoRevert": false,
+    "AutoPromote": false,
+    "Canary": 0
+  },
+  "Multiregion": null,
+  "Periodic": null,
+  "ParameterizedJob": null,
+  "Dispatched": false,
+  "DispatchIdempotencyToken": "",
+  "Payload": null,
+  "Meta": null,
+  "ConsulToken": "",
+  "ConsulNamespace": "",
+  "VaultToken": "",
+  "VaultNamespace": "",
+  "NomadTokenID": "",
+  "Status": "running",
+  "StatusDescription": "",
+  "Stable": true,
+  "Version": 2,
+  "SubmitTime": 1668533496869996000,
+  "CreateIndex": 37,
+  "ModifyIndex": 314,
+  "JobModifyIndex": 309
+}
